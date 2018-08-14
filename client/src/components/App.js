@@ -1,20 +1,35 @@
-import React, { Component } from 'react';
-import logo from '../logo.svg';
+import React from 'react';
+import { Link, IndexLink } from 'react-router';
+// import Auth from '../Auth';
 
-class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-      </div>
-    );
-  }
+let App = (props) => {
+	return (
+		<div className="App">
+			<div className="ui fluid container">
+				<div className="App-menu row">
+					<div className="column">
+						<IndexLink className="App-logo-text" to="/">MedBlock</IndexLink>
+						{/* {
+								Auth.isUserAuthenticated() ? (
+							<div className="right-aligned top-bar-link">
+	              <Link to="/dashboard">Dashboard</Link>
+	              <Link to="/logout">Logout</Link>
+							</div>
+								) : (
+							<div className="right-aligned top-bar-link">
+	              <Link to="/login">Login</Link>
+							</div>
+								)
+						} */}
+					</div>
+				</div>
+				<div className="ui container">
+					{props.children}
+				</div>
+
+			</div>
+		</div>
+	);
 }
 
 export default App;
