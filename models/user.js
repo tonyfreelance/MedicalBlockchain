@@ -24,7 +24,8 @@ var UserSchema = new Schema({
   isApproved: { // For Doctor user type
     type: Boolean,
     default: false
-  }
+  },
+  hospital: String
 });
 
 /**

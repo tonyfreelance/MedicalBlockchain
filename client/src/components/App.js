@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, IndexLink } from 'react-router';
-// import Auth from '../Auth';
+import Auth from '../Auth';
 
 let App = (props) => {
 	return (
@@ -9,18 +9,15 @@ let App = (props) => {
 				<div className="App-menu row">
 					<div className="column">
 						<IndexLink className="App-logo-text" to="/">MedBlock</IndexLink>
-						{/* {
-								Auth.isUserAuthenticated() ? (
-							<div className="right-aligned top-bar-link">
-	              <Link to="/dashboard">Dashboard</Link>
-	              <Link to="/logout">Logout</Link>
-							</div>
-								) : (
-							<div className="right-aligned top-bar-link">
-	              <Link to="/login">Login</Link>
-							</div>
-								)
-						} */}
+						{
+							Auth.isUserAuthenticated() ? (
+								<div className="right-aligned top-bar-link">
+									<Link to="/logout">Logout</Link>
+								</div>
+							) : (
+								<div></div>
+							)
+						}
 					</div>
 				</div>
 				<div className="ui container">

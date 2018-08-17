@@ -5,18 +5,22 @@ body {
   background-color: #f2f2f2 !important;
 }
 
+.App {
+  margin-bottom: 5rem;
+}
+
 .App-menu {
     margin: 0 !important;
     background-color: #3498db;
-    padding: 1.5rem;
+    padding: 1.6rem;
     box-shadow: 0 3px 0 0 #1c8bc3 !important;
 }
 
 .App-logo-text {
     font-weight: 700;
     color: white;
-    font-size: 2rem;
-    padding-left: 17rem;
+    font-size: 2.3rem;
+    padding-left: 18rem;
 }
 
 .App-logo-text:hover {
@@ -62,4 +66,29 @@ body {
 
 .shared-records {
   margin-bottom: 10rem !important;
+}
+
+.right-aligned {
+  float: right;
+  margin-right: 19rem;
+}
+
+.top-bar-link {
+  font-size: 1.2rem;
+}
+
+.top-bar-link a {
+  color: white !important;
+}
+
+.dashboard-welcome {
+  margin-bottom: 3rem;
+}
+
+.dashboard-main {
+  margin-top: 3rem;
+}
+
+.send-request-button {
+  margin-left: 1rem!important;
 }

@@ -29,6 +29,7 @@ var initialPeers = process.env.PEERS ? process.env.PEERS.split(',') : [];
 var mainAppConnection = mongoose.createConnection(config.dbURI);
 // Register models to ensure models are initialized only once in main app
 require('./models/user')(mainAppConnection);
+require('./models/request')(mainAppConnection);
 
 app.use(logger('dev'));
 app.use(bodyParser.json());

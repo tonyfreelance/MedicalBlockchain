@@ -6,6 +6,7 @@ import Doctor from './components/Doctor';
 import DoctorDashboard from './components/DoctorDashboard';
 import Admin from './components/Admin';
 import AdminDashboard from './components/AdminDashboard';
+import Auth from './Auth';
 
 const routes = {
   // base component (wrapper for the whole application).
@@ -21,7 +22,12 @@ const routes = {
     },
     {
       path: '/patient/dashboard',
-      component: PatientDashboard
+      component: PatientDashboard,
+      onEnter: (nextState, replace) => {
+        if (!Auth.isUserAuthenticated()) {
+          replace('/');
+        }
+      }
     },
     {
       path: '/doctor',
@@ -29,7 +35,12 @@ const routes = {
     },
     {
       path: '/doctor/dashboard',
-      component: DoctorDashboard
+      component: DoctorDashboard,
+      onEnter: (nextState, replace) => {
+        if (!Auth.isUserAuthenticated()) {
+          replace('/');
+        }
+      }
     },
     {
       path: '/admin',
@@ -37,7 +48,21 @@ const routes = {
     },
     {
       path: '/admin/dashboard',
-      component: AdminDashboard
+      component: AdminDashboard,
+      onEnter: (nextState, replace) => {
+        if (!Auth.isUserAuthenticated()) {
+          replace('/');
+        }
+      }
+    },
+    {
+      path: '/logout',
+      onEnter: (nextState, replace) => {
+        Auth.deauthenticateUser();
+        localStorage.removeItem('email');
+        // change the current URL to /
+        replace('/');
+      }
     },
   ]
 };

@@ -3,6 +3,7 @@ import { Button } from 'semantic-ui-react';
 import { CountryDropdown} from 'react-country-region-selector';
 import axios from 'axios';
 import {browserHistory} from 'react-router';
+import Auth from '../Auth';
 
 class Patient extends Component {
 
@@ -68,6 +69,7 @@ class PatientLogin extends Component {
 
     axios.post('/api/login', user)
     .then((response) => {
+      Auth.authenticateUser(response.data.token);
       // Redirect users to next screen
       console.log(response);
       localStorage.setItem('fullName', response.data.fullName);
@@ -77,12 +79,6 @@ class PatientLogin extends Component {
     .catch(error => {
       // Show error notification
       console.log(error);
-      // const failedNotification = {
-      //   title: 'Error!',
-      //   message: 'Could not process the form.',
-      //   level: 'error'
-      // };
-      // this.addNotification(failedNotification);
     });
   }
 
@@ -157,13 +153,14 @@ class PatientRegister extends Component {
       postalCode,
       city,
       country,
-      role: 'patient'
+      role: 'patient',
+      hospital: ''
     };
 
     axios.post('/api/register', passToServer)
     .then((response) => {
       // Redirect users to next screen
-        browserHistory.push('/patient/dashboard');
+        browserHistory.push('/patient');
     })
     .catch(error => {
       // Show error notification

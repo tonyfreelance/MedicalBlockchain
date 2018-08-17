@@ -3,6 +3,7 @@ import { Button } from 'semantic-ui-react';
 import { CountryDropdown} from 'react-country-region-selector';
 import axios from 'axios';
 import {browserHistory} from 'react-router';
+import Auth from '../Auth';
 
 class Doctor extends Component {
 
@@ -68,6 +69,7 @@ class DoctorLogin extends Component {
 
     axios.post('/api/login', user)
     .then((response) => {
+      Auth.authenticateUser(response.data.token);
       // Redirect users to next screen
       console.log(response);
       localStorage.setItem('fullName', response.data.fullName);
@@ -139,13 +141,14 @@ class DoctorRegister extends Component {
     postalCode: '',
     city: '',
     country: '',
-    phone: ''
+    phone: '',
+    hospital: ''
   }
 
   onSubmit = () => {
 
 
-    let {firstName, lastName, password, confirmPassword, phone, address, postalCode, city, country, email} = this.state;
+    let {firstName, lastName, password, confirmPassword, phone, address, postalCode, city, country, email, hospital} = this.state;
 
     let passToServer = {
       firstName,
@@ -157,7 +160,8 @@ class DoctorRegister extends Component {
       postalCode,
       city,
       country,
-      role: 'doctor'
+      role: 'doctor',
+      hospital
     };
 
 
@@ -184,7 +188,7 @@ class DoctorRegister extends Component {
   }
 
   render() {
-    let {firstName, lastName, password, confirmPassword, phone, address, postalCode, city, country, email} = this.state;
+    let {firstName, lastName, password, confirmPassword, phone, address, postalCode, city, country, email, hospital} = this.state;
 
     return (
       <div className="ui stackable center aligned grid container">
@@ -211,6 +215,17 @@ class DoctorRegister extends Component {
                   onChange={e => this.setState({lastName: e.target.value})}
                 />
               </div>
+            </div>
+
+            <div className="required field">
+              <label>Hospital</label>
+              <input
+                type="text"
+                name="hospital"
+                placeholder="Hospital"
+                value={hospital}
+                onChange={e => this.setState({hospital: e.target.value})}
+              />
             </div>
 
             <div className="required field">

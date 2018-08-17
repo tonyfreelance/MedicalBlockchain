@@ -26,10 +26,12 @@ class Block {
 }
 
 class Transaction{
-  constructor(fromAddress, toAddress, record){
+  constructor(fromAddress, toAddress, record, timestamp, sender){
       this.fromAddress = fromAddress;
       this.toAddress = toAddress;
       this.record = record;
+      this.timestamp = timestamp;
+      this.sender = sender;
   }
 }
 
@@ -92,9 +94,9 @@ var addBlockToChain = (newBlock) => {
   blockchain.chain.push(newBlock);
 }
 
-var createTransaction = (fromAddress, toAddress, record) => {
+var createTransaction = (fromAddress, toAddress, record, sender) => {
   blockchain.createTransaction(
-    new Transaction(fromAddress, toAddress, record)
+    new Transaction(fromAddress, toAddress, record, Date.now(), sender)
   );
   // var latestTransaction = this.pendingTransactions[this.pendingTransactions.length - 1];
   // return latestTransaction;
@@ -150,6 +152,43 @@ var replaceChain = (newBlocks) => {
     } else {
         console.log('Received blockchain invalid');
     }
+};
+
+var getRecordsForPatient = (address) => {
+  let transactions = [];
+
+  let dupRecord = 0;
+   for(const block of blockchain.chain){
+       for(const transaction of block.transactions) {
+           if(transaction.fromAddress === address && transaction.record !== dupRecord){
+               transactions.push(transaction);
+               dupRecord = transaction.record;
+           } else if (transaction.toAddress === address) {
+             transactions.push(transaction);
+           }
+       }
+   }
+   console.log('getRecordsForPatient: ', transactions);
+   return transactions;
+};
+
+var getRecordsForDoctor = (address, sharedPatients) => {
+  let transactions = [];
+
+  let dupRecord = 0;
+   for(const block of blockchain.chain){
+       for(const transaction of block.transactions){
+           // Doctor can only see records which were uploaded by themselves or from patients who agree to share with them
+           if(transaction.fromAddress === address && transaction.record !== dupRecord){
+               transactions.push(transaction);
+               dupRecord = transaction.record;
+           } else if (transaction.toAddress === address && sharedPatients.includes(transaction.fromAddress)) {
+             transactions.push(transaction);
+           }
+       }
+   }
+   console.log('getRecordsForDoctor: ', transactions);
+   return transactions;
 };
 
 
@@ -222,7 +261,7 @@ var handleBlockchainResponse = (message) => {
         if (latestBlockHeld.hash === latestBlockReceived.previousHash) {
             console.log("We can append the received block to our chain");
             addBlockToChain(latestBlockReceived);
-            broadcast(responseLatestMsg());      
+            broadcast(responseLatestMsg());
         } else if (receivedBlocks.length === 1) {
             console.log("We have to query the chain from our peer");
             broadcast(queryAllMsg());
@@ -255,4 +294,4 @@ var write = (ws, message) => ws.send(JSON.stringify(message));
 var broadcast = (message) => sockets.forEach(socket => write(socket, message));
 
 
-module.exports = {Block, Blockchain, Transaction, getBlockchain, getLatestBlock, replaceChain, addBlockToChain, createTransaction, mineBlock, connectToPeers, broadcastLatest, initP2PServer, getSockets};
+module.exports = {Block, Blockchain, Transaction, getBlockchain, getLatestBlock, replaceChain, addBlockToChain, createTransaction, mineBlock, connectToPeers, broadcastLatest, initP2PServer, getSockets, getRecordsForPatient, getRecordsForDoctor};

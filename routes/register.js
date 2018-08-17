@@ -26,6 +26,7 @@ router.post('/', function (req, res, next) {
 		userData.phone = req.body.phone.trim();
     userData.role = req.body.role;
 		userData.publicKey = publicKey;
+		userData.hospital = req.body.hospital
 
     console.log(userData);
 
