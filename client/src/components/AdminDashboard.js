@@ -185,7 +185,7 @@ class AdminDashboard extends Component {
     { menuItem: { key: 'approved-requests', icon: 'thumbs up outline', content: 'Approved Requests' }, render: () => <Tab.Pane>{approvedRequests()}</Tab.Pane> },
     { menuItem: { key: 'rejected-requests', icon: 'thumbs down outline', content: 'Rejected Requests' }, render: () => <Tab.Pane>{rejectedRequests()}</Tab.Pane> },
     ]
-
+  
     return(
       <div className="patient-dashboard">
         <h1><strong>Hello Admin!</strong></h1>

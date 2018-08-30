@@ -12,7 +12,8 @@ class Block {
     }
 
     calculateHashInternal() {
-      return CryptoJS.SHA256(this.index + this.previousHash + this.timestamp + JSON.stringify(this.transactions) + this.nonce).toString();
+      return CryptoJS.SHA256(this.index + this.previousHash + this.timestamp +
+        JSON.stringify(this.transactions) + this.nonce).toString();
     }
 
     mineBlock(difficulty) {
@@ -36,7 +37,6 @@ class Transaction{
 }
 
 class Blockchain {
-
   constructor() {
       this.chain = [this.createGenesisBlock()];
       this.difficulty = 4;
@@ -119,24 +119,23 @@ var calculateHash = (index, previousHash, timestamp, transactions, nonce) => {
 
 var isValidNewBlock = (newBlock, previousBlock) => {
     if (previousBlock.hash !== newBlock.previousHash) {
-        console.log('invalid previousHash');
+        console.log('Invalid previousHash!');
         return false;
     } else if (calculateHashForBlock(newBlock) !== newBlock.hash) {
-        console.log(typeof (newBlock.hash) + ' ' + typeof calculateHashForBlock(newBlock));
-        console.log('invalid hash: ' + calculateHashForBlock(newBlock) + ' ' + newBlock.hash);
+        console.log('Invalid hash!');
         return false;
     }
     return true;
 };
 
-var isValidChain = (blockchainToValidate) => {
-    if (JSON.stringify(blockchainToValidate[0]) !== JSON.stringify(blockchain.createGenesisBlock())) {
+var isValidChain = (testingBlockchain) => {
+    if (JSON.stringify(testingBlockchain[0]) !== JSON.stringify(blockchain.createGenesisBlock())) {
         return false;
     }
-    var tempBlocks = [blockchainToValidate[0]];
-    for (var i = 1; i < blockchainToValidate.length; i++) {
-        if (isValidNewBlock(blockchainToValidate[i], tempBlocks[i - 1])) {
-            tempBlocks.push(blockchainToValidate[i]);
+    var tempBlocks = [testingBlockchain[0]];
+    for (var i = 1; i < testingBlockchain.length; i++) {
+        if (isValidNewBlock(testingBlockchain[i], tempBlocks[i - 1])) {
+            tempBlocks.push(testingBlockchain[i]);
         } else {
             return false;
         }
@@ -146,7 +145,7 @@ var isValidChain = (blockchainToValidate) => {
 
 var replaceChain = (newBlocks) => {
     if (isValidChain(newBlocks) && newBlocks.length > blockchain.chain.length) {
-        console.log('Received blockchain is valid. Replacing current blockchain with received blockchain');
+        console.log('Received blockchain is valid.');
         blockchain.chain = newBlocks;
         broadcastLatest();
     } else {
@@ -156,7 +155,6 @@ var replaceChain = (newBlocks) => {
 
 var getRecordsForPatient = (address) => {
   let transactions = [];
-
   let dupRecord = 0;
    for(const block of blockchain.chain){
        for(const transaction of block.transactions) {
@@ -168,13 +166,11 @@ var getRecordsForPatient = (address) => {
            }
        }
    }
-   console.log('getRecordsForPatient: ', transactions);
    return transactions;
 };
 
 var getRecordsForDoctor = (address, sharedPatients) => {
   let transactions = [];
-
   let dupRecord = 0;
    for(const block of blockchain.chain){
        for(const transaction of block.transactions){
@@ -187,7 +183,6 @@ var getRecordsForDoctor = (address, sharedPatients) => {
            }
        }
    }
-   console.log('getRecordsForDoctor: ', transactions);
    return transactions;
 };
 
@@ -257,26 +252,30 @@ var handleBlockchainResponse = (message) => {
     var latestBlockReceived = receivedBlocks[receivedBlocks.length - 1];
     var latestBlockHeld = getLatestBlock();
     if (latestBlockReceived.index > latestBlockHeld.index) {
-        console.log('blockchain possibly behind. We got: ' + latestBlockHeld.index + ' Peer got: ' + latestBlockReceived.index);
+        console.log('Our blockchain may be behind other nodes. We got: ' + latestBlockHeld.index + '. Other nodes got: ' + latestBlockReceived.index);
         if (latestBlockHeld.hash === latestBlockReceived.previousHash) {
-            console.log("We can append the received block to our chain");
+            console.log("We can append the received block to our blockchain.");
             addBlockToChain(latestBlockReceived);
             broadcast(responseLatestMsg());
         } else if (receivedBlocks.length === 1) {
-            console.log("We have to query the chain from our peer");
+            console.log("We have to query the blockchain from other nodes");
             broadcast(queryAllMsg());
         } else {
             console.log("Received blockchain is longer than current blockchain");
             replaceChain(receivedBlocks);
         }
     } else {
-        console.log('received blockchain is not longer than current blockchain. Do nothing');
+        console.log('Received blockchain is not longer than current blockchain. Nothing needs to be done.');
     }
 };
 
 var broadcastLatest = () => {
   broadcast(responseLatestMsg());
 };
+var responseLatestMsg = () => ({
+    'type': MessageType.RESPONSE_BLOCKCHAIN,
+    'data': JSON.stringify([blockchain.getLatestBlock()])
+});
 
 // var getLatestBlock = () => blockchain[blockchain.length - 1];
 var queryChainLengthMsg = () => ({'type': MessageType.QUERY_LATEST});
@@ -285,10 +284,7 @@ var responseChainMsg = () =>({
     'type': MessageType.RESPONSE_BLOCKCHAIN,
     'data': JSON.stringify(blockchain.chain)
 });
-var responseLatestMsg = () => ({
-    'type': MessageType.RESPONSE_BLOCKCHAIN,
-    'data': JSON.stringify([blockchain.getLatestBlock()])
-});
+
 
 var write = (ws, message) => ws.send(JSON.stringify(message));
 var broadcast = (message) => sockets.forEach(socket => write(socket, message));

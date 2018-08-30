@@ -8,12 +8,10 @@ router.post('/', function (req, res, next) {
 
 	var User = require('../models/user')();
 
-	var privateKey = generatePrivateKey();
-	var publicKey = ec.keyFromPrivate(privateKey, 'hex').getPublic().encode('hex');
+	  var privateKey = generatePrivateKey();
+	  var publicKey = ec.keyFromPrivate(privateKey, 'hex').getPublic().encode('hex');
 
-	console.log(publicKey);
-
-  // Instantiate a client info Object
+    // Instantiate a client info Object
 		var userData = {};
 		userData.firstName = req.body.firstName.trim();
 		userData.lastName = req.body.lastName.trim();

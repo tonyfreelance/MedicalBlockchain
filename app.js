@@ -1,8 +1,6 @@
-// require('dotenv').config();
 var express = require('express');
 var path = require('path');
 var config = require('./config');
-// var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
@@ -19,7 +17,6 @@ var connectToPeers = blockchainMethods.connectToPeers;
 var mongoose   = require('mongoose');
 var passport = require('passport');
 var app = express();
-
 
 var http_port = process.env.HTTP_PORT || 3001;
 var p2p_port = process.env.P2P_PORT || 6001;
@@ -49,9 +46,6 @@ passport.use('local-login', localLoginStrategy);
 
 // pass the authenticaion checker middleware
 var authCheck = require('./middleware/auth-check');
-// app.use('/api/brand', authCheck);
-// app.use('/api/user', authCheck);
-// app.use('/api/jobs/:id', jobsAuthCheck);
 
 // Routes
 app.use('/api/register', register);
@@ -59,9 +53,6 @@ app.use('/api/login', login);
 app.use('/api/blockchain', blockchainRoute);
 app.use('/api/connect', connect);
 app.use('/*', index);
-
-// Handle logo upload
-// require('./handleUpload')(app);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -80,12 +71,11 @@ app.use(function(err, req, res, next) {
   // res.render('error');
 });
 
-
+var environment = process.env.NODE_ENV || 'development';
 
 // Set the port
 app.set('port', http_port);
 // Run the app!
-var environment = process.env.NODE_ENV || 'development';
 app.listen(app.get('port'), function() {
   console.log('We are in ' + environment + ' mode now!');
   console.log('Server is running at: http://localhost:' + app.get('port') + '/');

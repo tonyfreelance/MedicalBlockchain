@@ -14,16 +14,11 @@ router.post('/', function(req, res, next) {
             message: err.message
           });
         }
-
-        console.log('Login Success');
-
         return res.status(400).json({
           success: false,
           message: 'Could not process the form.'
         });
       }
-
-      console.log(userData);
       return res.send(userData);
     })(req, res, next);
 });

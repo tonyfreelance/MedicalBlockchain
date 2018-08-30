@@ -14,7 +14,7 @@ var UserSchema = new Schema({
   city: String,
   postalCode: String,
   country: String,
-  phone: String, //format +xxx.xxxxxxxxx
+  phone: String,
   role: String,
   publicKey: String,
   partners: {
@@ -25,7 +25,7 @@ var UserSchema = new Schema({
     type: Boolean,
     default: false
   },
-  hospital: String
+  hospital: String // For Doctor user type
 });
 
 /**
@@ -34,6 +34,7 @@ var UserSchema = new Schema({
  * @param {string} password
  * @returns {object} callback
  */
+
 UserSchema.methods.comparePassword = function comparePassword(password, callback) {
   bcrypt.compare(password, this.password, callback);
 };
@@ -41,12 +42,11 @@ UserSchema.methods.comparePassword = function comparePassword(password, callback
 /**
  * The pre-save hook method.
  */
+
 UserSchema.pre('save', function saveHook(next) {
   var user = this;
-
   // proceed further only if the password is modified or the user is new
   if (!user.isModified('password')) return next();
-
 
   return bcrypt.genSalt(function(saltError, salt) {
     if (saltError) { return next(saltError); }
@@ -59,6 +59,7 @@ UserSchema.pre('save', function saveHook(next) {
 
       return next();
     });
+
   });
 });
 

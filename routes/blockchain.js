@@ -13,39 +13,30 @@ var getSockets = blockchainMethods.getSockets;
 var getRecordsForPatient = blockchainMethods.getRecordsForPatient;
 var getRecordsForDoctor = blockchainMethods.getRecordsForDoctor;
 
-
-// console.log(blockchainMethods);
-
 router.get('/', function(req, res, next) {
   res.send(JSON.stringify(getBlockchain()));
 });
 
 router.post('/createTransaction', function(req, res, next) {
   var User = require('../models/user')();
-
   User.findOne({publicKey: req.body.fromAddress}, function(err, user) {
     if (err) {
       return res.send(err)
     }
     var sender = user.firstName + ' ' + user.lastName;
-
     // Send to all partners in partners list
     for(const partner of user.partners) {
       createTransaction(req.body.fromAddress, partner, req.body.record, sender);
     }
-
     var resData = {
       sender: req.body.fromAddress
     };
-
     res.send(sender);
   });
-
 });
 
 router.post('/createTransactionForDoctor', function(req, res, next) {
   var User = require('../models/user')();
-
   User.findOne({publicKey: req.body.fromAddress}, function(err, user) {
     if (err) {
       return res.send(err)
@@ -81,9 +72,7 @@ router.post('/getRecordsForPatient', function(req, res, next) {
   var address = req.body.publicKey;
   var transactions = getRecordsForPatient(address);
   var records = [];
-
   for(const transaction of transactions){
-
     var record = {
       record: transaction.record,
       sender: transaction.sender,
@@ -92,21 +81,18 @@ router.post('/getRecordsForPatient', function(req, res, next) {
     };
     records.push(record);
   }
-
   return res.send(records);
 });
 
 router.post('/getRecordsForDoctor', function(req, res, next) {
   var User = require('../models/user')();
   var address = req.body.publicKey;
-
   User.findOne({publicKey: address}, function(err, user) {
     if (err) {
       return res.send(err)
     }
     var transactions = getRecordsForDoctor(address, user.partners);
     var records = [];
-
     for(const transaction of transactions){
       var record = {
         record: transaction.record,
@@ -116,7 +102,6 @@ router.post('/getRecordsForDoctor', function(req, res, next) {
       };
       records.push(record);
     }
-
     return res.send(records);
   });
 });
